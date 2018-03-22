@@ -1,18 +1,23 @@
 package project;
 
+import org.opencv.core.Rect;
+
 public class ParkingSpot {
-	int x1;
-	int y1;
-	int x2;
-	int y2;
+	Rect r;
+	int x1, y1;
+	int x2, y2;
 	int spotNumber;
-	public ParkingSpot(int x1, int y1, int x2, int y2) {
-		this.x1 = x1;
-		this.y1 = y1;
-		this.x2 = x2;
-		this.y2 = y2;
+	boolean available = true;
+	
+	public ParkingSpot(Rect r) {
+		this.r = r;
+		this.x1 = (int) r.tl().x;
+		this.y1 = (int) r.tl().y;
+		this.x2 = (int) r.br().x;
+		this.y2 = (int) r.br().y;
 		this.spotNumber = spotNumber;
 	}
+	
 	public int getX1() {
 		return this.x1;
 	}
@@ -43,12 +48,13 @@ public class ParkingSpot {
 	public void setSpotNumber(int n) {
 		this.spotNumber = n;
 	}
-public void getSpot(int x1, int x2, int y1, int y2) {
-		ParkingSpotLocator h = new ParkingSpotLocator();
-		for(int i = 0; i < h.original.size(); i++) {
-			if(h.original.get(i).getX1() == x1 && h.original.get(i).getX2() == x2 && h.original.get(i).getY1() == y1 && h.original.get(i).getY2() == y2) {
-				
-			}
-		}
+	public String getAvailable() {
+		if (available == true)
+			return "available";
+		else
+			return "taken";
+	}
+	public void setAvailable(boolean b) {
+		this.available = b;
 	}
 }
