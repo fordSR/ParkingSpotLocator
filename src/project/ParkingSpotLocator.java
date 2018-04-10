@@ -1,13 +1,16 @@
 package project;
 
 import java.util.List;
+import java.awt.Color;
 import java.util.ArrayList;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.*;
 import org.opencv.imgproc.Imgproc;
@@ -19,9 +22,10 @@ public class ParkingSpotLocator {
 	Mat parkingMask;
 
 
-	public void emptyParkingLotProcessing() {
+	public void emptyParkingLotProcessing(Mat source) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Mat source = Imgcodecs.imread("parkinglot.jpg");
+		// uncomment if you want to hardcode filepath of image
+		//Mat source = Imgcodecs.imread("parkinglot.jpg");
 		Mat destination = new Mat(source.rows(), source.cols(), source.type());
 		Mat contourDest = Mat.zeros(destination.size(), CvType.CV_8UC3);
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -56,11 +60,48 @@ public class ParkingSpotLocator {
 			emptyParkingLot.get(i).setSpotNumber(count);
 		}
 	}
+	
+	// returns a mat which is the image but with lines connected
+	public Mat connectPoints() {
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		Mat source = Imgcodecs.imread("parking spot2.png");
+		Mat sourceClone = source.clone();
+		Mat destination = new Mat(source.rows(), source.cols(), source.type());
+		Mat contourDest = Mat.zeros(destination.size(), CvType.CV_8UC3);
+		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
+		// Filter the empty Parking Lot
+		// Grayscale
+		Imgproc.cvtColor(source, destination, Imgproc.COLOR_RGB2GRAY);
+		// Binary the image into black and white
+		Imgproc.threshold(destination, destination, 0, 255, Imgproc.THRESH_BINARY);
+		// Thicken/smooth lines
+		Imgproc.dilate(destination, destination, new Mat(), new Point(-1, 1), 2);
+		parkingMask = destination;
+
+		// Finds contours //
+		Imgproc.findContours(destination.clone(), contours,new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+		Imgproc.drawContours(contourDest, contours, -1, new Scalar(255, 255, 255));
+		for(int i = 0; i < contours.size(); i++){
+			// skips first contour because it is not a valid point on rectangle
+			if(i != 0) {
+			Rect r = Imgproc.boundingRect(contours.get(i));
+			// lines that connect rectangle points
+			// adds the lines to the original image
+			Imgproc.line(sourceClone, new Point(r.br().x - 18, r.tl().y), new Point(r.tl().x + 18, r.tl().y), new Scalar(255, 255, 255), 20);
+			Imgproc.line(sourceClone, new Point(r.tl().x + 18, r.br().y), new Point(r.br().x - 18, r.br().y), new Scalar(255, 255, 255), 20);
+			}
+		}
+		// uncomment to test
+		// writes to image
+	    // Imgcodecs.imwrite("connectedLines.jpg", sourceClone);
+	    return sourceClone;
+	}
+	
 
 	public void activeParkingLotProcessing() {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Mat source = Imgcodecs.imread("Test3.png");
+		Mat source = Imgcodecs.imread("parking filled 2.png");
 		Mat destination = new Mat(source.rows(), source.cols(), source.type());
 		Mat contourDest = Mat.zeros(destination.size(), CvType.CV_8UC3);
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -91,7 +132,6 @@ public class ParkingSpotLocator {
 	}
 	
 	public void compareParkingLots() {
-		// if greater than x1 and less than x2, and greater than y1 and less than y2
 		// COMPARES THE ARRAYLIST OF emptyParkingLot RECTANGLES WITH THE ARRAYLIST OF THE NEW IMAGE RECTANGLES TO SEE IF THERE IS A SPOT TAKEN
 		int spotsAvailable = emptyParkingLot.size();
 		int left, right, bottom, top;
@@ -116,8 +156,9 @@ public class ParkingSpotLocator {
 
 	public static void main(String[] args) {
 		ParkingSpotLocator h = new ParkingSpotLocator();
-		h.emptyParkingLotProcessing();
+		h.emptyParkingLotProcessing(h.connectPoints());
 		h.activeParkingLotProcessing();
 		h.compareParkingLots();
+
 	}
 }
