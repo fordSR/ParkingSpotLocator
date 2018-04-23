@@ -49,12 +49,14 @@ public class ParkingSpotLocator {
 			Rect r = Imgproc.boundingRect(contours.get(i));
 			if(r.area() >= 2000 && ((r.height / (double) r.width) > 1.0)) {
 				Imgproc.rectangle(contourDest, r.tl(), r.br(), new Scalar(100, 175, 50), -1);
+				
 				ParkingSpot p = new ParkingSpot(r);
 				p.setSpotNumber(num);
 				num++;
 				emptyParkingLot.add(p);
 			}
 		}
+
 	    Imgcodecs.imwrite("connectedLines_" + 1 + ".jpg", contourDest);
 
 
@@ -139,10 +141,12 @@ public class ParkingSpotLocator {
 		for(int i = 0; i < contours.size(); i++){
 			Rect r = Imgproc.boundingRect(contours.get(i));
 			if(r.area() >= 2000 && ((r.height / (double) r.width) > 1.0)) {
-				Imgproc.rectangle(contourDest.clone(), r.tl(), r.br(), new Scalar(0, 0, 255), -1);
+				Imgproc.rectangle(source, r.tl(), r.br(), new Scalar(0, 0, 255), -1);
 				cars.add(new ParkingSpot(r));
 			}
 		}
+	    Imgcodecs.imwrite("result.png", source);
+
 	}
 	
 	public void compareParkingLots(String source2) {
@@ -163,16 +167,14 @@ public class ParkingSpotLocator {
 					Imgproc.rectangle(source, emptyParkingLot.get(i).r.tl(), emptyParkingLot.get(i).r.br(), new Scalar(0, 0, 255), -1);
 					emptyParkingLot.get(i).available = false;
 				}
-				else {
-					Imgproc.rectangle(source, emptyParkingLot.get(i).r.tl(), emptyParkingLot.get(i).r.br(), new Scalar(0, 255, 0), -1);
-
-				}
 			}
 			// This is solely for us for testing purposes...the number of the spot won't be displayed so the fact that it starts at the bottom right shouldn't matter.
 			System.out.println("Parking spot " + emptyParkingLot.get(i).getSpotNumber() + " is " + emptyParkingLot.get(i).getAvailable());
 
 		}
-	    Imgcodecs.imwrite("result.png", source);
+	    //Imgcodecs.imwrite("result.png", source);
+
+	  //  Imgcodecs.imwrite("result.png", source);
 		System.out.println(spotsAvailable + " available parking spots.");
 	}
 	

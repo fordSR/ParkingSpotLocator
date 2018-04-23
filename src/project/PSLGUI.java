@@ -56,6 +56,7 @@ public class PSLGUI extends Application {
 	Pane root2;
 	HBox top;
 	HBox bottom;
+	double yCoord = 5;
 	int counter = 0;
 	ParkingSpotLocator psl = new ParkingSpotLocator();
 	ComboBox<String> box;
@@ -91,6 +92,8 @@ public class PSLGUI extends Application {
 		
 		bp.setTop(top);
 		bp.setBottom(bottom);
+		bottom.setSpacing(50);
+		bottom.alignmentProperty().set(Pos.CENTER);
 		
 		leftMenu();
 		rightMenu();
@@ -104,34 +107,36 @@ public class PSLGUI extends Application {
             }
         });
 		// GONNA WORK ON THIS LATER
-//		result.setOnAction(new EventHandler<ActionEvent>() {	 
-//            @Override
-//            public void handle(ActionEvent event) {
-//            	clicked = true;
-//               if(clicked) {
-//            	   center.getChildren().remove(currentLot);
-//            	   for(ImageView v : cars) {
-//            		   center.getChildren().remove(v);
-//            	   }
-//           		   try {
-//					Image result = new Image(new FileInputStream("result.png"));
-//					resultPic = new ImageView(result);
-//					resultPic.setX(220);
-//					resultPic.setY(100);
-//					resultPic.setFitWidth(700);
-//					resultPic.setFitHeight(500);
-//					center.getChildren().add(resultPic);
-//					clicked = false;  
-//				} catch (FileNotFoundException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//               }
-//               else {
-//            	   
-//               }
-//            }
-//        });
+		result.setOnAction(new EventHandler<ActionEvent>() {	 
+            @Override
+            public void handle(ActionEvent event) {
+            	clicked = true;
+               if(clicked) {
+            	   center.getChildren().remove(currentLot);
+            	   for(ImageView v : cars) {
+            		   center.getChildren().remove(v);
+            	   }
+           		   try {
+           			   yCoord = 5;
+					Image result = new Image(new FileInputStream("result.png"));
+					resultPic = new ImageView(result);
+					resultPic.setX(220);
+					resultPic.setY(100);
+					resultPic.setFitWidth(700);
+					resultPic.setFitHeight(500);
+					center.getChildren().add(resultPic);
+					clicked = false;  
+					rightMenu();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+               }
+               else {
+            	   
+               }
+            }
+        });
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	} 
@@ -167,10 +172,8 @@ public class PSLGUI extends Application {
 
           snapStage.show();
 	}
-
 	
-	
-	public void dragAndDrop(ImageView v) {
+	public void dragAndDrop(ImageView v, double yCoord2) {
 		 v.setOnMousePressed(e -> {
 	            startDragX = e.getX();
 	            startDragY = e.getY();
@@ -178,10 +181,11 @@ public class PSLGUI extends Application {
 
 	     v.setOnMouseDragged(e -> {
 	            v.setTranslateX(e.getSceneX() - startDragX - 1000);
-	            v.setTranslateY(e.getSceneY() - startDragY - 100);
+	            v.setTranslateY(e.getSceneY() - startDragY - yCoord2);
 	        });
 	     v.setOnMouseReleased(e -> {
 	    	 	try {
+	    	 		yCoord = 5;
 					rightMenu();
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -189,6 +193,7 @@ public class PSLGUI extends Application {
 				}	 
 	     });
 	}
+	
 	public void lotChoice(ImageView v, Image i,  Pane root) throws IOException {
 			ImageView v1 = new ImageView(i);
 			currentLot = v1;
@@ -201,19 +206,23 @@ public class PSLGUI extends Application {
         	v1.setFitHeight(500);
         	snapShot("before");
     }
+	
 	public void reAdd() {
 		for(ImageView v : cars){
 		center.getChildren().remove(v);
 		center.getChildren().add(v);
 		}
 	}
+	
 	public void clear() throws IOException {
 		center.getChildren().clear();
+		yCoord = 5;
 		cars.clear();
 		leftMenu();
 		rightMenu();
 	}
-		public void leftMenu() throws IOException {
+	
+	public void leftMenu() throws IOException {
 			Image lot1 = new Image(new FileInputStream("lot1.png"));
 			Image lot2 = new Image(new FileInputStream("lot2.png"));
 			Image lot3 = new Image(new FileInputStream("lot3.png"));
@@ -282,20 +291,65 @@ public class PSLGUI extends Application {
 		    center.getChildren().add(root);
 		
 	}
+	
 	public void rightMenu() throws FileNotFoundException {
 		Image car1 = new Image(new FileInputStream("car1.png"));
-		ImageView v1 = new ImageView(car1);
-		ImageView v2 = new ImageView(car1);
-		ImageView v3 = new ImageView(car1);
+		Image car2 = new Image(new FileInputStream("car2.png"));
+		Image car3 = new Image(new FileInputStream("car3.png"));
+		Image car4 = new Image(new FileInputStream("car4.png"));
+		Image car5 = new Image(new FileInputStream("car5.png"));
+		Image car6 = new Image(new FileInputStream("car6.png"));
+		Image[] c = {car1, car2, car3, car4, car5, car6};
+		for(Image i : c) {
+			ImageView v = new ImageView(i);
+			center.getChildren().add(v);
+			cars.add(v);
+			v.setLayoutX(1000);
+			v.setLayoutY(5 + yCoord);
+			v.setFitHeight(120);
+			v.setFitWidth(50);
+			dragAndDrop(v, yCoord);
+			yCoord += 125;
+		}
+//		ImageView v1 = new ImageView(car1);
+//		ImageView v2 = new ImageView(car2);
+//		ImageView v3= new ImageView(car3);
+//		
+//			center.getChildren().add(v1);
+//			center.getChildren().add(v2);
+//			center.getChildren().add(v3);
+//			cars.add(v1);
+//			cars.add(v2);
+//			cars.add(v3);
+//			v1.setLayoutX(1000);
+//			v1.setLayoutY(0);
+//			v2.setLayoutX(1000);
+//			v2.setLayoutY(120);
+//			v3.setLayoutX(1000);
+//			v3.setLayoutY(240);
+////			yCoord += 120;
+//			v1.setFitHeight(120);
+//			v1.setFitWidth(50);
+//			v2.setFitHeight(120);
+//			v2.setFitWidth(50);
+//			v3.setFitHeight(120);
+//			v3.setFitWidth(50);
+//			dragAndDrop(v1;
+//			dragAndDrop(v2);
+//			dragAndDrop(v3);
+		//}
+//		ImageView v1 = new ImageView(car1);
+//		ImageView v2 = new ImageView(car1);
+//		v1.setFitHeight(120);
+//		v1.setFitWidth(50);
+//		ImageView v3 = new ImageView(car1);
 //		VBox cars = new VBox();
-		v1.setFitHeight(120);
-		v1.setFitWidth(50);
 		//cars.getChildren().addAll(v1);
-		center.getChildren().add(v1);
-		cars.add(v1);
-		v1.setLayoutX(1000);
-		v1.setLayoutY(100);
-		dragAndDrop(v1);
+//		center.getChildren().add(v1);
+//		cars.add(v1);
+//		v1.setLayoutX(1000);
+//		v1.setLayoutY(100);
+//		dragAndDrop(v1);
 
 		//BufferedImage image = ImageIO.read(new File("car1.png"));
 //		Image car1 = new Image(new FileInputStream("car1.png"));
