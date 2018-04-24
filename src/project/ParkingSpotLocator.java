@@ -22,6 +22,7 @@ public class ParkingSpotLocator {
 	Mat parkingMask;
 	int counter = 0;
 	int num = 1;
+	String im;
 
 
 	public void emptyParkingLotProcessing(Mat source) {
@@ -32,6 +33,7 @@ public class ParkingSpotLocator {
 		Mat contourDest = Mat.zeros(destination.size(), CvType.CV_8UC3);
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		parkingMask = destination;
+		Mat s2 = Imgcodecs.imread(im);
 
 		// Filter the empty Parking Lot //
 		// Grayscale
@@ -48,7 +50,7 @@ public class ParkingSpotLocator {
 		for(int i = 0; i < contours.size(); i++){
 			Rect r = Imgproc.boundingRect(contours.get(i));
 			if(r.area() >= 2000 && ((r.height / (double) r.width) > 1.0)) {
-				Imgproc.rectangle(contourDest, r.tl(), r.br(), new Scalar(100, 175, 50), -1);
+				Imgproc.rectangle(s2, r.tl(), r.br(), new Scalar(0, 255, 0), -1);
 				
 				ParkingSpot p = new ParkingSpot(r);
 				p.setSpotNumber(num);
@@ -57,7 +59,7 @@ public class ParkingSpotLocator {
 			}
 		}
 
-	    Imgcodecs.imwrite("connectedLines_" + 1 + ".jpg", contourDest);
+	    Imgcodecs.imwrite("firstResult.png", s2);
 
 
 		// OPENCV CREATES RECTANGLES FROM BOTTOM UP, SO SPOTS ARE NUMBER 6-1 INSTEAD OF 1-6
@@ -74,6 +76,7 @@ public class ParkingSpotLocator {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		Mat source = Imgcodecs.imread(image);
 		Mat sourceClone = source.clone();
+		im = image;
 		Mat destination = new Mat(source.rows(), source.cols(), source.type());
 		Mat contourDest = Mat.zeros(destination.size(), CvType.CV_8UC3);
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -141,16 +144,17 @@ public class ParkingSpotLocator {
 		for(int i = 0; i < contours.size(); i++){
 			Rect r = Imgproc.boundingRect(contours.get(i));
 			if(r.area() >= 2000 && ((r.height / (double) r.width) > 1.0)) {
-				Imgproc.rectangle(source, r.tl(), r.br(), new Scalar(0, 0, 255), -1);
+//				Imgproc.rectangle(source, r.tl(), r.br(), new Scalar(0, 0, 255), -1);
 				cars.add(new ParkingSpot(r));
 			}
 		}
-	    Imgcodecs.imwrite("result.png", source);
+	  //  Imgcodecs.imwrite("result.png", source);
 
 	}
 	
 	public void compareParkingLots(String source2) {
 		// COMPARES THE ARRAYLIST OF emptyParkingLot RECTANGLES WITH THE ARRAYLIST OF THE NEW IMAGE RECTANGLES TO SEE IF THERE IS A SPOT TAKEN
+		Mat result = Imgcodecs.imread("firstResult.png");
 		Mat source = Imgcodecs.imread(source2);
 		int spotsAvailable = emptyParkingLot.size();
 		int left, right, bottom, top;
@@ -164,7 +168,7 @@ public class ParkingSpotLocator {
 
 				if (left < right && bottom > top) {
 					spotsAvailable--;
-					Imgproc.rectangle(source, emptyParkingLot.get(i).r.tl(), emptyParkingLot.get(i).r.br(), new Scalar(0, 0, 255), -1);
+					Imgproc.rectangle(result, emptyParkingLot.get(i).r.tl(), emptyParkingLot.get(i).r.br(), new Scalar(0, 0, 255), -1);
 					emptyParkingLot.get(i).available = false;
 				}
 			}
@@ -174,7 +178,7 @@ public class ParkingSpotLocator {
 		}
 	    //Imgcodecs.imwrite("result.png", source);
 
-	  //  Imgcodecs.imwrite("result.png", source);
+	    Imgcodecs.imwrite("result.png", result);
 		System.out.println(spotsAvailable + " available parking spots.");
 	}
 	

@@ -110,8 +110,8 @@ public class PSLGUI extends Application {
 		result.setOnAction(new EventHandler<ActionEvent>() {	 
             @Override
             public void handle(ActionEvent event) {
-            	clicked = true;
-               if(clicked) {
+            	//clicked = true;
+             //  if(clicked) {
             	   center.getChildren().remove(currentLot);
             	   for(ImageView v : cars) {
             		   center.getChildren().remove(v);
@@ -125,18 +125,15 @@ public class PSLGUI extends Application {
 					resultPic.setFitWidth(700);
 					resultPic.setFitHeight(500);
 					center.getChildren().add(resultPic);
-					clicked = false;  
 					rightMenu();
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				
 				}
-               }
-               else {
-            	   
-               }
             }
         });
+		
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	} 
@@ -224,7 +221,7 @@ public class PSLGUI extends Application {
 	
 	public void leftMenu() throws IOException {
 			Image lot1 = new Image(new FileInputStream("lot1.png"));
-			Image lot2 = new Image(new FileInputStream("lot2.png"));
+			Image lot2 = new Image(new FileInputStream("source.jpg"));
 			Image lot3 = new Image(new FileInputStream("lot3.png"));
 			ImageView v1 = new ImageView(lot1);
 			ImageView v2 = new ImageView(lot2);
@@ -237,10 +234,6 @@ public class PSLGUI extends Application {
 			v3.setFitHeight(120);
 			root = new Pane();
 		    root.setPrefSize(400, 300);
-		    Text text = new Text("Choose a parking lot");
-		    text.setWrappingWidth(385);
-		    text.setLayoutX(15);
-		    text.setLayoutY(20);
 		    VBox menu = new VBox();
 		    menu.setId("menu");
 		    menu.prefHeightProperty().bind(root.heightProperty());
@@ -287,7 +280,7 @@ public class PSLGUI extends Application {
 		        menuTranslation.play();
 		    });
 		    root.setLayoutY(50);
-		    root.getChildren().addAll(text, menu);
+		    root.getChildren().add(menu);
 		    center.getChildren().add(root);
 		
 	}
