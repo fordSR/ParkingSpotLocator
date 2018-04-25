@@ -10,6 +10,8 @@
 !libs
 !libs/**
 
+!Documentation
+!Documentation/**
 
 !*.txt
 !*.md
