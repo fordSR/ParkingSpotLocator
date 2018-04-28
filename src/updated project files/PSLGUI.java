@@ -53,21 +53,7 @@ public class PSLGUI extends Application {
 	Scene scene = new Scene(bp, 1300, 800);
 
 	@Override
-	public void start(Stage primaryStage) throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		// get the model
-		String model = System.getProperty("sun.arch.data.model");
-		// the path the .dll lib location
-		String libraryPath = "C:/opencv/build/java/x86/";
-		// check for if system is 64 or 32
-		if(model.equals("64")) {
-		    libraryPath = "C:/opencv/build/java/x64/";
-		}
-		// set the path
-		System.setProperty("java.library.path", libraryPath);
-		Field sysPath = ClassLoader.class.getDeclaredField("sys_paths");
-		sysPath.setAccessible(true);
-		sysPath.set(null, null);
-		// load the lib
+	public void start(Stage primaryStage) throws IOException{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		center = new Pane();
 		top = new HBox();
