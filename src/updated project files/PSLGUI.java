@@ -39,11 +39,12 @@ public class PSLGUI extends Application {
 	HBox top;
 	HBox bottom;
 	double yCoord = 0;
-	boolean lot;
 	Pane pane;
 	Button locate = new Button("Locate Spots");
 	Button result = new Button("Result");
 	boolean clicked = true;
+	boolean lot;
+	boolean searchClicked = false;
 	double startDragX = 0;
 	double startDragY = 0;
 	ImageView resultPic;
@@ -94,6 +95,7 @@ public class PSLGUI extends Application {
 		// BUTTON FOR LOCATING CARS
 		locate.setOnMousePressed(e -> {
 			if(lot) {
+				searchClicked = true;
 				if (!clicked) {
 					snapShot("after");
 					searchFunctions();
@@ -104,7 +106,7 @@ public class PSLGUI extends Application {
 		
 		// BUTTON FOR TOGGLING RESULT & IMAGE OF CARS
 		result.setOnMousePressed(e -> {
-			if(lot) {
+			if(lot && searchClicked) {
 				if(clicked == false) {
 					clicked = true;
 					center.getChildren().remove(currentLot);
