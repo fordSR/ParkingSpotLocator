@@ -26,6 +26,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class PSLGUI extends Application {
@@ -38,7 +39,7 @@ public class PSLGUI extends Application {
 	HBox top;
 	HBox bottom;
 	double yCoord = 0;
-	Button search;
+	boolean lot;
 	Pane pane;
 	Button locate = new Button("Locate Spots");
 	Button result = new Button("Result");
@@ -92,15 +93,18 @@ public class PSLGUI extends Application {
 		
 		// BUTTON FOR LOCATING CARS
 		locate.setOnMousePressed(e -> {
-			if (!clicked) {
-				snapShot("after");
-				searchFunctions();
-				available.setText(psl.spotsAvailable + " available parking spots");
+			if(lot) {
+				if (!clicked) {
+					snapShot("after");
+					searchFunctions();
+					available.setText(psl.spotsAvailable + " available parking spots");
+				}
 			}
 		});
 		
 		// BUTTON FOR TOGGLING RESULT & IMAGE OF CARS
 		result.setOnMousePressed(e -> {
+			if(lot) {
 				if(clicked == false) {
 					clicked = true;
 					center.getChildren().remove(currentLot);
@@ -133,12 +137,14 @@ public class PSLGUI extends Application {
 						center.getChildren().add(v);
 					}
 				}
+			}
 		});
 		center.setStyle("-fx-background-color: \"black\"");
 		bottom.setStyle("-fx-background-color: \"black\"");
 		bottom.setPadding(new Insets(0, 0, 10, 0));
 		scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
 		primaryStage.show();
 	}
 	
@@ -197,6 +203,7 @@ public class PSLGUI extends Application {
 	public void lotChoice(ImageView v, Image i) throws IOException {
 		ImageView v1 = new ImageView(i);
 		available.setText("");
+		lot = true;
 		currentLot = v1;
 		reset();
 		clicked = false;
