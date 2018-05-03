@@ -7,6 +7,12 @@
 !src
 !src/**
 
+!rsc
+!rsc/**
+
+!doc
+!doc/**
+
 !libs
 !libs/**
 
